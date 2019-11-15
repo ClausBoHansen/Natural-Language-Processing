@@ -1,0 +1,15 @@
+1.  Get
+2.  Clean
+3.  Explore
+4.  Split stratified
+5.  Visualize split
+6.  Imputation
+7.  Feature creation/dummy vars (cut2)
+8.  Preprocess / Normalize
+9.  Variable Selection (Boruta)
+10. Visualize variables  (featurePlot, qplot, ...)
+11. PCA
+12. Remove highly correlated
+13. Model building
+14. Diagnostic plots
+15. Presentation
