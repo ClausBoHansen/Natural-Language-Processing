@@ -1,0 +1,90 @@
+---
+title: "NLP - Data Exploration"
+author: "Claus Bo Hansen"
+date: "November 15, 2019"
+output:
+  html_document:
+    theme: sandstone
+    fig_width: 14
+    fig_height: 8
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    number_sections: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, comment = NA)
+
+# Make sure that environment is empty
+rm(list=ls())
+
+# Load configuration
+source("Config.R")
+
+# Load libraries
+#library(tm)
+library(tidyverse)
+
+
+# Load data
+load(paste(outputDir, "02-ExploreData.RData", sep = ""))
+
+# Dataset to explore
+contentSources <- c("blogs", "news", "twitter")
+
+
+```
+
+
+This document is part of the capstone project in the Data Science Specialization on Johns Hopkins.
+
+
+
+
+```{r blogs news twitter, results = 'asis'}
+
+for (contentSource in contentSources) {
+  
+  cat(paste("\n\n# ", contentSource, "\n\n", sep = ""))
+  
+  cat(paste("Number of strings in set: ", format(length(eval(as.name(contentSource))), big.mark = ","), "\n", sep = ""))
+
+  cat("\n\n## Word densities\n\n")
+
+#  dataset <- eval(as.name(contentSource))
+  for (settype in c("All", "Reduced"))
+  {
+    cat(paste("\n\n", settype, "\n\n", sep = ""))
+    frequencyName <- paste("frequency", settype, contentSource, sep = "")
+    dataset <- eval(as.name(frequencyName))
+    plotdata <- as.data.frame(dataset) %>%
+      mutate(dataset = as.integer(dataset)) %>%
+      rename(occurrences = dataset) %>%
+      filter(occurrences <= 200)
+    
+    diagram <- ggplot(plotdata, aes(plotdata$occurrences)) +
+     geom_histogram(binwidth = 1)
+    
+    print(diagram)
+    
+    
+  }
+
+}
+
+
+
+```
+
+
+
+
+# Thougths
+Words that occur very rarely could exluded, since they will take up resources and most likely will not be used.  
+Same argument holds for 2- and 3-grams, exclude these save resources.  
+1-grams can be used for predicting next character in word.
+
+
