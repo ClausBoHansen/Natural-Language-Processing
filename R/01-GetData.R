@@ -31,6 +31,3 @@ save(blogs,
      file = paste(outputDir ,"01-GetData.RData", sep = ""))
 
 
-
-######
-# Interesting package: tm
