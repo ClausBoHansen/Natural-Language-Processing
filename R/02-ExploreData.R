@@ -12,7 +12,9 @@ load(paste(outputDir, "01-GetData.RData", sep = ""))
 
 
 contentSources <- c("blogs", "news", "twitter")
+prefixes <- c("uni", "bi", "tri")
 
+i <- 1 # for testing
 
 for (contentSource in contentSources) {
   # Unigrams
@@ -22,28 +24,13 @@ for (contentSource in contentSources) {
                                                                                                                    removePunctuation = TRUE,
                                                                                                                    bounds = list(local = c(50, Inf)))))
   
+################################
+# create uni-, bi- and trigram for all corpora
+  
+  
   # Bigrams
   
-  ##########################################################
-  # See http://tm.r-forge.r-project.org/faq.html#Bigrams
-  # TermDocumentMatrix
-  
-  # testtext <- "Dette er en test tekst, som ikke er ret spændende."
-  # TermDocumentMatrix(testtext)
-  # DocumentTermMatrix(testtext)
-  
 
-  # Example from http://tm.r-forge.r-project.org/faq.html#Bigrams   
-  # library("tm")
-  # data("crude")
-  # 
-  # BigramTokenizer <-
-  #   function(x)
-  #     unlist(lapply(ngrams(words(x), 2), paste, collapse = " "), use.names = FALSE)
-  # 
-  # tdm <- TermDocumentMatrix(crude, control = list(tokenize = BigramTokenizer))
-  # inspect(removeSparseTerms(tdm[, 1:10], 0.7))
-  
   
   # Trigrams
   
