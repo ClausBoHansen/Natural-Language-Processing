@@ -1,3 +1,16 @@
 final
 01-GetData.RData
 02-ExploreData.RData
+twitter-unigrams.RData
+twitter-bigrams.RData
+twitter-trigrams.RData
+twitter-quadgrams.RData
+news-unigrams.RData
+news-bigrams.RData
+news-trigrams.RData
+news-quadgrams.RData
+blogs-unigrams.RData
+blogs-bigrams.RData
+blogs-trigrams.RData
+blogs-quadgrams.RData
+
