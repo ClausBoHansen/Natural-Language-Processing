@@ -7,39 +7,24 @@ rm(list=ls())
 # Load configuration
 source("Config.R")
 
+# Load libraries
+library(tm)
+
 # Load data
 load(paste(outputDir, "01-GetData.RData", sep = ""))
 
 
 contentSources <- c("blogs", "news", "twitter")
-prefixes <- c("uni", "bi", "tri")
-
-i <- 1 # for testing
+#prefixes <- c("uni", "bi", "tri")
 
 for (contentSource in contentSources) {
   # Unigrams
   assign(paste("frequencyAll", contentSource, sep = ""), termFreq(eval(as.name(contentSource)), control = list(wordLengths = c(2, Inf))))
-  assign(paste("frequencyReduced", contentSource, sep = ""), termFreq(eval(as.name(contentSource)), control = list(wordLengths = c(2, Inf),
+  assign(paste("frequencyAbove50", contentSource, sep = ""), termFreq(eval(as.name(contentSource)), control = list(wordLengths = c(2, Inf),
                                                                                                                    removeNumbers = TRUE,
                                                                                                                    removePunctuation = TRUE,
                                                                                                                    bounds = list(local = c(50, Inf)))))
-  
-################################
-# create uni-, bi- and trigram for all corpora
-  
-  
-  # Bigrams
-  
-
-  
-  # Trigrams
-  
 }
-
-
-
-# 
-
 
 
 # Save data
@@ -49,9 +34,9 @@ save(blogs,
      frequencyAllblogs,
      frequencyAllnews,
      frequencyAlltwitter,
-     frequencyReducedblogs,
-     frequencyReducednews,
-     frequencyReducedtwitter,
+     frequencyAbove50blogs,
+     frequencyAbove50news,
+     frequencyAbove50twitter,
      file = paste(outputDir ,"02-ExploreData.RData", sep = ""))
 
 

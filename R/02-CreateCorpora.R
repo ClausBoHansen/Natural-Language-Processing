@@ -16,9 +16,11 @@ source("Config.R")
 load(paste(outputDir, "01-GetData.RData", sep = ""))
 
 
+# Running one at the time might be needed if memory is exhausted
 #contentSources <- c("blogs", "news", "twitter")
 contentSources <- c("twitter")
 #contentSources <- c("blogs")
+
 prefixes <- c("uni", "bi", "tri", "quad")
 
 #test <- readLines("test.txt")
@@ -26,18 +28,11 @@ prefixes <- c("uni", "bi", "tri", "quad")
 
 # For n-grams
 for (contentSource in contentSources) {
-  # Test
-  # Read to VCorpus
-#  inputCorpus <- VCorpus(VectorSource(test))
-  
 
   # Read to VCorpus
   inputCorpus <- VCorpus(VectorSource(eval(as.name(contentSource))))
-  
-  # Test loop
-#  inputCorpus <- inputCorpus[1:100]
-  
-  # Transformations
+
+    # Transformations
   inputCorpus <- inputCorpus %>%
     tm_map(stripWhitespace) %>%
     tm_map(content_transformer(tolower)) %>%
@@ -54,42 +49,17 @@ for (contentSource in contentSources) {
     outputFileName <- paste(outputDir, contentSource, "-", prefixes[i], "grams.RData", sep = "")
     
     # Calculate Document Term Matrix
-    # assign(dataObjectName, DocumentTermMatrix(inputCorpus,
-    #                                           control = list(wordLengths=c(2,Inf),
-    #                                                          tokenize = Tokenizer)))
     DocTerms <- DocumentTermMatrix(inputCorpus,
                                               control = list(wordLengths=c(2,Inf),
                                                              tokenize = Tokenizer))
     # Save Document Term Matrix to separate file
-#    DocTerms <- eval(as.name(dataObjectName))
-#    save(dataObjectName, file = paste(outputDir, dataObjectName, ".RData", sep = ""))
     save(DocTerms, file = outputFileName)
     
 
-    # Remove object from memory
-#    rm(as.name(dataObjectName))
-    # Garbage collection
     gc()
     
   } # for (i in 1:4)
 } # for (contentSource in contentSources)
 
 
-#rm(DocTerms)
-
-#load("../Data/Output/blogs-unigrams.RData")
-
-# Save data
-# save(blogs,
-#      news,
-#      twitter,
-#      
-#      # frequencyAllblogs,
-#      # frequencyAllnews,
-#      # frequencyAlltwitter,
-#      # frequencyReducedblogs,
-#      # frequencyReducednews,
-#      # frequencyReducedtwitter,
-#      file = paste(outputDir ,"02-CreateCorpora.RData", sep = ""))
-
-
+rm(DocTerms)

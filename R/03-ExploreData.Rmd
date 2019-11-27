@@ -1,0 +1,154 @@
+---
+title: "NLP - Data Exploration"
+author: "Claus Bo Hansen"
+date: "November 27, 2019"
+output:
+  html_document:
+    theme: sandstone
+    fig_width: 14
+    fig_height: 8
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    number_sections: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, comment = NA)
+
+# Make sure that environment is empty
+rm(list=ls())
+
+# Load configuration
+source("Config.R")
+
+# Load libraries
+#library(tm)
+library(tidyverse)
+
+
+# Load data
+load(paste(outputDir, "02-ExploreData.RData", sep = ""))
+
+# Dataset to explore
+contentSources <- c("blogs", "news", "twitter")
+
+
+```
+
+
+**Week 2 Milestone report in capstone project in the Data Science Specialization on Johns Hopkins.**
+
+
+# Abstract
+
+## Purpose
+The purpose of this exploration phase is to understand what is in the datasets.  
+Three datasets (types of content) are provided:
+
+1. Blog
+2. News
+3. Twitter
+
+## Observations
+
+* All content types has a very large amount of words, which only occur very few times
+
+* By requiring a word to occur 50 times (approximately 0.005% of documents) the number of terms can be reduced with around 98%
+
+* "The" is bar far the most common word in all three content types
+
+
+## Ideas for prediction application
+* Terms which only occur rarely in the data can be removed. This will greatly reduce the size of the dataset, which I expect to increase (speed) performance
+
+* Document Term Matrices must be built for uni-, bi, tri- and quadgrams in order to be able to predict based on previous 1, 2 or 3 words
+
+* Bi-, tri-, and quadgram can be reduced in the same way as unigrams, i.e. remove rare entries
+
+
+
+# Data Exploration
+
+Term frequency histograms are plotted both for the entire Corpus and for terms on occuring 50 times or more.
+
+
+```{r blogs news twitter, results = 'asis'}
+
+# Initialize data frame for summary
+summaryTable <- data.frame()
+
+for (contentSource in contentSources) {
+  
+  cat(paste("\n\n## ", contentSource, "\n\n", sep = ""))
+  
+  cat(paste("Number of strings in set: ", format(length(eval(as.name(contentSource))), big.mark = ","), "\n\n", sep = ""))
+  
+  termstat <- as.data.frame(eval(as.name(paste("frequencyAll", contentSource, sep = ""))))
+  termstat$term <- rownames(termstat)
+  colnames(termstat) <- c("Occurences", "Term")
+  termstat <- termstat %>%
+    select(Term, Occurences) %>%
+    arrange(desc(Occurences)) %>%
+    mutate(Occurences = as.numeric(Occurences))
+  termstat <- termstat[1:10,]
+
+
+  cat("\n\n### Top 10 terms\n\n")
+  
+  #diagram <- ggplot(data = termstat, aes(x=Term, y=Occurences)) +
+  diagram <- ggplot(termstat, aes(x=reorder(Term, Occurences, sum), y=Occurences)) +
+    geom_bar(stat = 'identity') +
+    xlab("Term") +
+    coord_flip()
+
+  print(diagram)
+
+
+  cat("\n\n### Word densities\n\n")
+
+#  dataset <- eval(as.name(contentSource))
+  for (settype in c("All", "Above50"))
+  {
+    cat(paste("\n\n**", settype, "**\n\n", sep = ""))
+    cat(paste("Number of unique words (unigrams) in set: ", format(length(eval(as.name(paste("frequency", settype, contentSource, sep = "")))), big.mark = ","), "\n\n", sep = ""))
+
+    frequencyName <- paste("frequency", settype, contentSource, sep = "")
+    dataset <- eval(as.name(frequencyName))
+    plotdata <- as.data.frame(dataset) %>%
+      mutate(dataset = as.integer(dataset)) %>%
+      rename(occurrences = dataset) %>%
+      filter(occurrences <= 200)
+    
+    diagram <- ggplot(plotdata, aes(plotdata$occurrences)) +
+     geom_histogram(binwidth = 1)
+    
+    print(diagram)
+    
+    
+  }
+
+  # Add to summary table
+  addLine <- list(Dataset = contentSource,
+                  Lines = length(eval(as.name(contentSource))),
+                  UniqueWords = length(eval(as.name(paste("frequencyAll", contentSource, sep = "")))),
+                  UniqueWordsOccuring50timesOrMore = length(eval(as.name(paste("frequencyAbove50", contentSource, sep = ""))))
+                    )
+
+  summaryTable <- rbind(summaryTable, addLine, stringsAsFactors = FALSE)
+
+}
+
+
+
+```
+
+
+## Summary of tables
+
+```{r}
+print(summaryTable)
+
+```
