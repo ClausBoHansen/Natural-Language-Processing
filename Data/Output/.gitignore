@@ -13,4 +13,5 @@ blogs-unigrams.RData
 blogs-bigrams.RData
 blogs-trigrams.RData
 blogs-quadgrams.RData
+05-CreateTermFrequencies.RData
 
