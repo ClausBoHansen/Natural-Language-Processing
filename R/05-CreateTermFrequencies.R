@@ -49,6 +49,8 @@ for (corpustype in corpustypes) {
 
 }
 
+rm(DocTerms)
+
 # Save data
 save(unigrams,
      bigrams,
