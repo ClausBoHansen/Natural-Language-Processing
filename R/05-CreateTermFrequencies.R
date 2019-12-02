@@ -9,10 +9,10 @@ library(tidyverse)
 library(tm)
 
 # Minimum occurences of term in each corpus (blogs, news, twitter) to be included in combined term frequency list
-ngramThreshold <- c("uni" = 50,
-                    "bi" = 50,
-                    "tri" = 50,
-                    "quad" = 50)
+ngramThreshold <- c("uni" = 1,
+                    "bi" = 1,
+                    "tri" = 1,
+                    "quad" = 1)
 
 # Load configuration
 source("Config.R")
