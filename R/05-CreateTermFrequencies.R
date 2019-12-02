@@ -51,11 +51,16 @@ for (corpustype in corpustypes) {
 
 rm(DocTerms)
 
+# Create combined set of search strings
+commonStrings <- rbind(unigrams, bigrams, trigrams, quadgrams)
+
+
 # Save data
 save(unigrams,
      bigrams,
      trigrams,
      quadgrams,
+     commonStrings,
      file = paste(outputDir ,"05-CreateTermFrequencies.RData", sep = ""))
 
 
