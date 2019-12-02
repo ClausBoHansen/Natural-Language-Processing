@@ -18,11 +18,30 @@ NextTerms <- function(inputText = "") {
   inputText <- str_squish(inputText) # Remove excess blanks
   inputText <- str_replace_all(inputText, "[^[:alpha:] ]", "")
 #  print(inputText)
+
+  matchFound <- FALSE
   
+    
   if (partialWord)
     # Part of word entered, predict the rest
     {
     cat("Partial word\n")
+    # Search for string, start with quadgrams, then trigrams, then bigrams lastly unigrams
+    i <- 3
+    while (!matchFound & i >= 0) {
+      matchstring <- str_match(inputText, paste("([:alpha:]+ ){", i ,"}[:alpha:]+$", sep = ""))[1]
+      if (!is.na(matchstring)) {
+        print(matchstring)
+        cat(paste("Searching in ", dictionary[i+1], "\n", sep = ""))
+        matches <- eval(as.name(dictionary[i+1]))[which(startsWith(eval(as.name(dictionary[i+1]))$term, matchstring)),]
+        print(dim(matches))
+        if (dim(matches)[1] > 1 | (dim(matches)[1] == 1 & nchar(matchstring) < nchar(matches[1]))) matchFound <- TRUE
+        # Remove potential identical match
+        if (dim(matches)[1] > 1) matches <- matches[which(nchar(matches$term) > nchar(matchstring)),]
+        print(matches)
+      }
+      i <- i -1
+    }
     
     
   } else
@@ -31,31 +50,35 @@ NextTerms <- function(inputText = "") {
       cat("Not partial word\n")
       # Search for string, start with quadgrams, then trigrams and lastly bigrams
       i <- 3
-      matchFound <- FALSE
+#      matchFound <- FALSE
       while (!matchFound & i >= 1) {
         matchstring <- str_match(inputText, paste("([:alpha:]+ ){", i-1 ,"}[:alpha:]+$", sep = ""))[1]
         if (!is.na(matchstring)) {
           print(matchstring)
           cat(paste("Searching in ", dictionary[i+1], "\n", sep = ""))
-          
+          matches <- eval(as.name(dictionary[i+1]))[which(startsWith(eval(as.name(dictionary[i+1]))$term, paste(matchstring, " ", sep = ""))),]
+          print(dim(matches))
+          if (dim(matches)[1] > 0) matchFound <- TRUE
+          print(matches)
         }
         i <- i -1
-          
       }
     
+    }
+  
+  if (matchFound)
+  {
+    result <- matches %>%
+      arrange(desc(count)) %>%
+      mutate(term = str_match(term, "[:alpha:]+$"))
+    
+  } else
+  {
+    result <- NA
   }
+
+  
+  result
   
 }
-
-
-
-
-# Timing
-
-system.time( for (i in 1:1000){
-  commonStrings[which(startsWith(bigrams$term, "zo")),]
-#  commonStrings[which(endsWith(bigrams$term, "zo")),]
-#  testset[startsWith(term,"zo")]
-}
-)
 
