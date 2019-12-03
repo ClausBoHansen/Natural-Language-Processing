@@ -14,9 +14,10 @@ NextTerms <- function(inputText = "") {
   # Dictionaries
   dictionary <- c("unigrams", "bigrams", "trigrams", "quadgrams")
   
-  cat("Starting NextTerms\n")
+#  cat("Starting NextTerms\n")
   inputText <- str_squish(inputText) # Remove excess blanks
-  inputText <- str_replace_all(inputText, "[^[:alpha:] ]", "")
+  inputText <- str_replace_all(inputText, "[^[:alpha:] ]", "") # Remove anything not being a letter or a blank space
+  inputText <- tolower(inputText)
 #  print(inputText)
 
   matchFound <- FALSE
@@ -54,8 +55,8 @@ NextTerms <- function(inputText = "") {
       while (!matchFound & i >= 1) {
         matchstring <- str_match(inputText, paste("([:alpha:]+ ){", i-1 ,"}[:alpha:]+$", sep = ""))[1]
         if (!is.na(matchstring)) {
-#          print(matchstring)
-#          cat(paste("Searching in ", dictionary[i+1], "\n", sep = ""))
+          print(matchstring)
+          cat(paste("Searching in ", dictionary[i+1], "\n", sep = ""))
           matches <- eval(as.name(dictionary[i+1]))[which(startsWith(eval(as.name(dictionary[i+1]))$term, paste(matchstring, " ", sep = ""))),]
 #          print(dim(matches))
           if (dim(matches)[1] > 0) matchFound <- TRUE
